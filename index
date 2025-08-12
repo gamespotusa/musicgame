@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Game</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  h1 {
+    font-size: 3em;
+    color: white;
+    margin-bottom: 20px;
+  }
+  button {
+    font-size: 2em;
+    padding: 15px 30px;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<h1 id="wordDisplay">Click Start</h1>
+<button id="nextBtn">Start</button>
+
+<script>
+  const words = [
+    "Love","You","Me","Baby","Heart","Night","Day","Time","Life","World",
+    "Dream","Feel","Want","Need","Kiss","Touch","Hold","Smile","Tear","Cry",
+    "Stay","Go","Away","Home","Forever","Never","Always","Again","Dance","Sing",
+    "Star","Sky","Light","Dark","Rain","Fire","Free","True","Mine","Us"
+  ];
+
+  const backgrounds = [
+    {bg: "red", text: "white"},
+    {bg: "yellow", text: "black"},
+    {bg: "orange", text: "navy"}
+  ];
+
+  const wordDisplay = document.getElementById("wordDisplay");
+  const nextBtn = document.getElementById("nextBtn");
+
+  function nextWord() {
+    if (words.length === 0) {
+      wordDisplay.textContent = "Game Over!";
+      nextBtn.disabled = true;
+      return;
+    }
+    const wordIndex = Math.floor(Math.random() * words.length);
+    const word = words.splice(wordIndex, 1)[0];
+    const colorScheme = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+    document.body.style.backgroundColor = colorScheme.bg;
+    wordDisplay.style.color = colorScheme.text;
+    wordDisplay.textContent = word;
+  }
+
+  nextBtn.addEventListener("click", nextWord);
+</script>
+
+</body>
+</html>
