@@ -3,72 +3,261 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Word Game</title>
+<title>keep it 100 - Word Game</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  h1 {
-    font-size: 3em;
-    color: white;
-    margin-bottom: 20px;
-  }
-  button {
-    font-size: 2em;
-    padding: 15px 30px;
-    cursor: pointer;
-    border: none;
-    border-radius: 10px;
-    background-color: white;
-    color: black;
-    font-weight: bold;
-  }
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        transition: background-color 0.5s ease;
+        background: #111;
+    }
+    .tagline {
+        font-size: 2.5rem;
+        color: #00ffcc;
+        margin-bottom: 20px;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+    .score, .timer {
+        font-size: 2rem;
+        color: #ffd700;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+    .word {
+        font-size: 3rem;
+        margin-bottom: 30px;
+        min-height: 3.5rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+    button {
+        font-size: 2rem;
+        padding: 15px 40px;
+        cursor: pointer;
+        border: none;
+        border-radius: 10px;
+        background-color: #fff;
+        color: #222;
+        font-weight: bold;
+        margin-top: 10px;
+        transition: background 0.2s, color 0.2s;
+    }
+    button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Popup Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      overflow: auto; background: rgba(0,0,0,0.7);
+    }
+    .modal-content {
+      background: #222;
+      margin: 8vh auto;
+      padding: 32px 24px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 480px;
+      color: #fff;
+      box-shadow: 0 4px 24px #0009;
+      position: relative;
+      font-size: 1.1rem;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .close {
+      color: #fff;
+      position: absolute;
+      top: 14px; right: 20px;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      margin: 18px 0;
+      border-collapse: collapse;
+      background: #333;
+      color: #ffd700;
+    }
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #555;
+      text-align: left;
+    }
+    th { color: #00ffcc; font-weight: bold; }
+    tr:last-child td { border-bottom: none; }
+    h2 { color: #00ffcc; margin-top: 0; }
+    h3 { color: #ffd700; margin-bottom: 8px; }
 </style>
 </head>
 <body>
 
-<h1 id="wordDisplay">Click Start</h1>
+<div class="tagline">keep it 100</div>
+<!-- Popup trigger button -->
+<button onclick="openModal()">How to Play</button>
+
+<div class="score" id="scoreDisplay">Score: 100</div>
+<div class="timer" id="timerDisplay">Timer: 5</div>
+<div class="word" id="wordDisplay">Click Start</div>
 <button id="nextBtn">Start</button>
 
+<!-- Popup Modal Structure -->
+<div id="popupModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeModalBtn">&times;</span>
+    <h2>Quick-Reference Cheat Sheet</h2>
+    <table>
+      <tr><th>Action</th><th>Points</th><th>Notes</th></tr>
+      <tr><td>Tap your own color word</td><td>+5</td><td>You have 25 chances</td></tr>
+      <tr><td>Tap another’s color word</td><td>+10 (double)</td><td>75 chances (steals)</td></tr>
+      <tr><td>Steal a turn</td><td>+20</td><td>Opponent times out (5 sec), you get 2 sec to tap</td></tr>
+      <tr><td>Skip a word (Next)</td><td>-5</td><td>Word returns to shuffle</td></tr>
+      <tr><td>Failed steal (voted out)</td><td>-10</td><td>Lose points if group rejects steal</td></tr>
+    </table>
+    <h3>🎤 Snappy Tutorial</h3>
+    <p>
+      “Welcome to the Ultimate Music Word Showdown! Here’s how you play:<br><br>
+      You’re competing solo against up to 3 other players, taking turns through 10 rounds each.<br><br>
+      Tap words in your own color to score 5 points. See a chance to steal from someone else? Tap their color word fast and earn double points—10 points!<br><br>
+      If an opponent freezes for more than 5 seconds, you’ve got 2 seconds to tap and steal their turn. Pull it off and you snag a 20-point bonus!<br><br>
+      But skip a word? That’ll cost you 5 points, and the word goes right back into the mix. Try to avoid getting voted out for a bad steal — that’ll lose you 10 points!<br><br>
+      Keep your eyes sharp, your fingers faster, and climb that leaderboard. Ready? Let’s play!”
+    </p>
+  </div>
+</div>
+
 <script>
-  const words = [
-    "Love","You","Me","Baby","Heart","Night","Day","Time","Life","World",
-    "Dream","Feel","Want","Need","Kiss","Touch","Hold","Smile","Tear","Cry",
-    "Stay","Go","Away","Home","Forever","Never","Always","Again","Dance","Sing",
-    "Star","Sky","Light","Dark","Rain","Fire","Free","True","Mine","Us"
-  ];
+const words = [
+    // ❤️ Feelings & Relationships
+    "Love","You","Me","Baby","Heart","Want","Need","Forever","Never","Always",
+    "Alone","Together","Strong","Weak","Broken","Heal","Believe","Trust","Hope","Fear",
+    // ⏳ Time & Life
+    "Night","Day","Time","Life","Again","Away","Home","Lost","Found","High","Low",
+    "Wait","Stay","Leave","Open","Close","Chase","Rise","Fall","Forever",
+    // 🎵 Actions & Expressions
+    "Kiss","Touch","Hold","Smile","Tear","Cry","Dance","Sing","Run","Walk","Ride",
+    "Shout","Scream","Laugh","Whisper","Burn","Shine","Glow","Fight","Breathe",
+    // 🌍 Places & Nature
+    "World","Dream","Sky","Star","Light","Dark","Rain","Fire","Free","True","Mine",
+    "Us","Road","Highway","Wind","Ocean","River","Mountain","Moon","Sun"
+];
 
-  const backgrounds = [
-    {bg: "red", text: "white"},
-    {bg: "yellow", text: "black"},
-    {bg: "orange", text: "navy"}
-  ];
+const colors = ["#16a085", "#c0392b", "#2980b9", "#2c3e50", "#f39c12", "#8e44ad", "#27ae60"];
+let remaining = [];
+let score = 100;
+let timer = null;
+let timeLeft = 5;
+let started = false;
 
-  const wordDisplay = document.getElementById("wordDisplay");
-  const nextBtn = document.getElementById("nextBtn");
+const wordDisplay = document.getElementById('wordDisplay');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const timerDisplay = document.getElementById('timerDisplay');
+const nextBtn = document.getElementById('nextBtn');
 
-  function nextWord() {
-    if (words.length === 0) {
-      wordDisplay.textContent = "Game Over!";
-      nextBtn.disabled = true;
-      return;
+function resetGame() {
+    score = 100;
+    started = false;
+    remaining = [...words];
+    wordDisplay.textContent = "Click Start";
+    scoreDisplay.textContent = "Score: 100";
+    timerDisplay.textContent = "Timer: 5";
+    document.body.style.backgroundColor = "#111";
+    nextBtn.textContent = "Start";
+    nextBtn.disabled = false;
+    clearInterval(timer);
+    timeLeft = 5;
+}
+
+function startWordTimer() {
+    clearInterval(timer);
+    timeLeft = 5;
+    timerDisplay.textContent = `Timer: ${timeLeft}`;
+    timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `Timer: ${timeLeft}`;
+        if (timeLeft <= 0) {
+            endGame("Time's Up!");
+        }
+    }, 1000);
+}
+
+function endGame(message) {
+    clearInterval(timer);
+    wordDisplay.textContent = `${message} Final Score: ${score}`;
+    document.body.style.backgroundColor = "#111";
+    nextBtn.disabled = true;
+    nextBtn.textContent = "Game Over";
+    timerDisplay.textContent = "Timer: 0";
+}
+
+function nextWord() {
+    if (!started) {
+        started = true;
+        nextBtn.textContent = "Next";
+        remaining = shuffle([...words]);
+        scoreDisplay.textContent = `Score: ${score}`;
+        startWordTimer();
+    } else {
+        score = Math.max(0, score - 1);
+        scoreDisplay.textContent = `Score: ${score}`;
     }
-    const wordIndex = Math.floor(Math.random() * words.length);
-    const word = words.splice(wordIndex, 1)[0];
-    const colorScheme = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-    document.body.style.backgroundColor = colorScheme.bg;
-    wordDisplay.style.color = colorScheme.text;
-    wordDisplay.textContent = word;
-  }
 
-  nextBtn.addEventListener("click", nextWord);
+    if (remaining.length === 0) {
+        endGame("Game Over!");
+        return;
+    }
+
+    // Show next word, random color
+    const word = remaining.pop();
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    document.body.style.backgroundColor = color;
+    wordDisplay.textContent = word;
+
+    startWordTimer();
+
+    if (remaining.length === 0) {
+        setTimeout(() => endGame("Game Over!"), 1000);
+    }
+}
+
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+nextBtn.addEventListener("click", nextWord);
+
+// Optional: Double-click score to reset game
+scoreDisplay.addEventListener("dblclick", resetGame);
+
+// Modal popup logic
+function openModal() {
+  document.getElementById('popupModal').style.display = 'block';
+}
+document.getElementById('closeModalBtn').onclick = function() {
+  document.getElementById('popupModal').style.display = 'none';
+};
+window.onclick = function(event) {
+  if (event.target == document.getElementById('popupModal')) {
+    document.getElementById('popupModal').style.display = "none";
+  }
+};
 </script>
 
 </body>
